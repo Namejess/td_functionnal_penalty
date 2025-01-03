@@ -1,10 +1,5 @@
 import "./types.ts";
-import type {
-  Team,
-  PenaltyResult,
-  ResultSession,
-  PenaltyState,
-} from "./types.ts";
+import type { Team, PenaltyState } from "./types.ts";
 
 // L'approche est d'avoir un programme "stateless" au sein des différents fonctions
 // L'idée est donc de pouvoir conserver un historique de chaque parties et que la
@@ -38,8 +33,8 @@ const updateState = (
   team: Team,
   result: boolean
 ): PenaltyState => ({
-  teamA: state.teamA + (team === "A" && result ? 1 : 0),
-  teamB: state.teamB + (team === "B" && result ? 1 : 0),
+  teamA: state.teamA + (team === "A" && result ? 1 : 0), // Update du score : Si c'est la team A et que result est true = 1, sinon 0
+  teamB: state.teamB + (team === "B" && result ? 1 : 0), // Update du score : Si c'est la team B et que result est true = 1, sinon 0
   history: [...state.history, { team, result }],
 });
 
@@ -69,12 +64,13 @@ const hasWinner = (state: PenaltyState): boolean => {
  */
 // #######################################################################
 const simulatePenaltySession = (state: PenaltyState): PenaltyState => {
-  hasWinner(state)
-    ? state
-    : const newState = simulatePenaltySession(
-        updateState(state, teamChoice(state), randomPenalty())
-      );
-  return simulatePenaltySession(state);
+  if (hasWinner(state)) return state;
+
+  const team = teamChoice(state);
+  const result = randomPenalty();
+  const newState = updateState(state, team, result);
+
+  return simulatePenaltySession(newState);
 };
 
 // #######################################################################
@@ -87,9 +83,14 @@ const simulatePenaltySession = (state: PenaltyState): PenaltyState => {
  */
 // #######################################################################
 const teamChoice = (state: PenaltyState): Team => {
-  const team: Team = state.history.length % 2 === 0 ? "A" : "B"; 
-  return team
+  const team: Team = state.history.length % 2 === 0 ? "A" : "B";
+  return team;
 };
+
+const victoryTeam = (state: PenaltyState): Team => {
+    const winnerTeam: Team = state.teamA > state.teamB ? "A" : "B";
+    return winnerTeam
+}
 
 // #######################################################################
 // DISPLAY HISTORY
@@ -108,11 +109,10 @@ const displayHistory = (state: PenaltyState): void => {
   });
 
   historyStrings.forEach((line) => console.log(line));
-  const vainqueur = state.teamA > state.teamB ? "A" : "B";
   console.log(
     `Score final: Team A marque ${state.teamA} points / Team B marque ${state.teamB} points`
   );
-  console.log(`Le vainqueur est l'équipe ${vainqueur} ! Félicitations !`);
+  console.log(`Le vainqueur est l'équipe ${victoryTeam(state)} ! Félicitations !`);
 };
 
 // #######################################################################
@@ -127,3 +127,15 @@ const initialState: PenaltyState = { teamA: 0, teamB: 0, history: [] };
 const finalState = simulatePenaltySession(initialState);
 
 displayHistory(finalState);
+
+export {
+  displayHistory,
+  finalState,
+  hasWinner,
+  initialState,
+  randomPenalty,
+  simulatePenaltySession,
+  teamChoice,
+  updateState,
+  victoryTeam
+};
