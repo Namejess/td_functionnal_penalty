@@ -1,54 +1,118 @@
 import "./types.ts";
-import type { Team, PenaltyResult, ResultSession } from "./types.ts";
+import type {
+  Team,
+  PenaltyResult,
+  ResultSession,
+  PenaltyState,
+} from "./types.ts";
 
-// Init
-const teamA: Team = {
-    name: "Team A",
-    score: 0
-}
+// L'approche est d'avoir un programme "stateless" au sein des différents fonctions
+// L'idée est donc de pouvoir conserver un historique de chaque parties et que la
+// récursivité tourne tant que la condition de victoire n'est pas atteinte
+// Découper les tâches :
+// 	    Générer un tir au but aléatoire
+// 	    Mettre à jour un score immuable
+// 	    Stocker un historique des tirs
+// 	    Déterminer le vainqueur
+// 	    Simuler et rejouer une séance (récursif)
+// 	    Afficher les résultats (console.log)
 
-const teamB: Team = {
-    name: "Team B",
-    score: 0
-}
+// #######################################################################
+// Fonction de tir au but (True ou false)
+// #######################################################################
+const randomPenalty = (): boolean => Math.random() < 0.5;
 
-let resultSession: ResultSession = {
-    scoreTeamA: 0,
-    scoreTeamB: 0,
-    gameRound: [0]
-}
+// #######################################################################
+// UPDATE STATE
+/**
+ *
+ *
+ * @param {PenaltyState} state
+ * @param {Team} team
+ * @param {boolean} result
+ * @return {*}  {PenaltyState}
+ */
+// #######################################################################
+const updateState = (
+  state: PenaltyState,
+  team: Team,
+  result: boolean
+): PenaltyState => ({
+  teamA: state.teamA + (team === "A" && result ? 1 : 0),
+  teamB: state.teamB + (team === "B" && result ? 1 : 0),
+  history: [...state.history, { team, result }],
+});
 
-// =============MONDE IMPUR===================
-// Retourne 0 ou 1
-var randomBoolean = Math.random() < 0.5;
+// #######################################################################
+// HAS WINNER (détermine le vainqueur)
+/**
+ *
+ *
+ * @param {PenaltyState} state
+ * @return {*}  {boolean}
+ */
+// #######################################################################
+const hasWinner = (state: PenaltyState): boolean => {
+  const totalTirs = state.history.length;
+  const diff = Math.abs(state.teamA - state.teamB);
+
+  return (totalTirs === 10 && diff > 1) || totalTirs === 10;
+};
+
+// #######################################################################
+// SIMULATE PENALTY SESSION
+/**
+ *
+ *
+ * @param {PenaltyState} state
+ * @return {*}  {PenaltyState}
+ */
+// #######################################################################
+const simulatePenaltySession = (state: PenaltyState): PenaltyState => {
+  if (hasWinner(state)) return state; // Condition de sortie si vainqueur
+
+  const team: Team = state.history.length % 2 === 0 ? "A" : "B"; // Alterne entre la team A et B (pair/impair)
+  const result = randomPenalty(); // Random but
+  const newState = updateState(state, team, result); // Génération d'un nouvel état
+
+  return simulatePenaltySession(newState); // Récursivité avec un nouvel état à traiter
+};
+
+// #######################################################################
+// DISPLAY HISTORY
+/**
+ *
+ *
+ * @param {PenaltyState} state
+ */
+// #######################################################################
+const displayHistory = (state: PenaltyState): void => {
+  const historyStrings = state.history.map((entry, index) => {
+    const { team, result } = entry;
+    return `Tir ${index + 1}: Score : ${result}/${result} | Equipe ${team} : ${
+      result ? "+1" : "0"
+    }`;
+  });
+
+  historyStrings.forEach((line) => console.log(line));
+  const vainqueur = state.teamA > state.teamB ? "A" : "B";
+  console.log(
+    `Score final: Team A marque ${state.teamA} points / Team B marque ${state.teamB} points`
+  );
+  console.log(`Le vainqueur est l'équipe ${vainqueur} ! Félicitations !`);
+};
+
+// #######################################################################
+// DEMARRAGE DU JEU
+// I : INITIAL STATE
+// II : FINAL STATE (récupération final de l'état du jeu une fois la session de tir terminé)
+// III : DISPLAY HISTORY (écriture dans la console du résultat)
+// #######################################################################
 
 
 
+const initialState: PenaltyState = { teamA: 0, teamB: 0, history: [] };
 
-// =============MONDE PUR===================
-function game(resultSession: ResultSession, randomBoolean: boolean, team: Team, gameRound: number) {
-    let copy = resultSession
+const finalState = simulatePenaltySession(initialState);
 
-    // while (gameRound < 6 ){
-    // Lancement Team A
-    if (team.name === "Team A") {
-        if (randomBoolean) {
-            copy.scoreTeamA = 1
-        }
-    } else {
-        if (randomBoolean) {
-            copy.scoreTeamB = 1
-        }
-    }
-
-    copy.gameRound.map(a => a + 1);
-    // }
-
-    console.log(copy)
-    return copy
-}
-
-game(resultSession, randomBoolean, teamA, resultSession.gameRound.length)
-
-console.log(randomBoolean)
-console.log("coucou2")
+displayHistory(finalState);

@@ -7,10 +7,7 @@ type PenaltyResult = {
 };
 
 // Type pour l'équipe
-type Team = {
-    name: string;
-    score: number;
-  };
+type Team = "A" | "B";
 
 // Historique de la session (catalogue)
 type ResultSession = {
@@ -19,5 +16,11 @@ type ResultSession = {
     gameRound: number[],
 }
 
+type PenaltyState = {
+  teamA: number;
+  teamB: number;
+  history: { team: Team; result: boolean }[];
+};
+
 // Export
-export {type PenaltyResult, type Team, type ResultSession};
+export {type PenaltyResult, type Team, type ResultSession, type PenaltyState};
