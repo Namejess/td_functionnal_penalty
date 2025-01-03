@@ -69,13 +69,26 @@ const hasWinner = (state: PenaltyState): boolean => {
  */
 // #######################################################################
 const simulatePenaltySession = (state: PenaltyState): PenaltyState => {
-  if (hasWinner(state)) return state; // Condition de sortie si vainqueur
+  hasWinner(state)
+    ? state
+    : const newState = simulatePenaltySession(
+        updateState(state, teamChoice(state), randomPenalty())
+      );
+  return simulatePenaltySession(state);
+};
 
-  const team: Team = state.history.length % 2 === 0 ? "A" : "B"; // Alterne entre la team A et B (pair/impair)
-  const result = randomPenalty(); // Random but
-  const newState = updateState(state, team, result); // Génération d'un nouvel état
-
-  return simulatePenaltySession(newState); // Récursivité avec un nouvel état à traiter
+// #######################################################################
+// TEAM CHOICE (choix team en alternance)
+/**
+ *
+ *
+ * @param {PenaltyState} state
+ * @return {*}  {Team}
+ */
+// #######################################################################
+const teamChoice = (state: PenaltyState): Team => {
+  const team: Team = state.history.length % 2 === 0 ? "A" : "B"; 
+  return team
 };
 
 // #######################################################################
@@ -108,8 +121,6 @@ const displayHistory = (state: PenaltyState): void => {
 // II : FINAL STATE (récupération final de l'état du jeu une fois la session de tir terminé)
 // III : DISPLAY HISTORY (écriture dans la console du résultat)
 // #######################################################################
-
-
 
 const initialState: PenaltyState = { teamA: 0, teamB: 0, history: [] };
 
