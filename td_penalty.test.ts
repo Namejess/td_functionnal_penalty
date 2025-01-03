@@ -1,6 +1,6 @@
-import { expect, it, test } from "bun:test";
+import { expect, it, spyOn, test } from "bun:test";
 import type { PenaltyState } from "./types.ts";
-import { hasWinner, randomPenalty, updateState, victoryTeam } from "./index.ts";
+import { hasWinner, randomPenalty, simulatePenaltySession, updateState, victoryTeam } from "./index.ts";
 
 // Initial State
 const initialState: PenaltyState = {
@@ -40,14 +40,32 @@ test("Update State, should return correct new penalty state", () => {
 // TEST BOOLEAN RESULT
 test("Random penaly boolean result", () => {
   const random = randomPenalty();
-  expect(random).toEqual(true || false);
+  expect(random).toBeBoolean();
 });
 
 // TEST DU VAINQUEUR
 test("Victory condition", () => {
-    const winner = hasWinner(victoryState);
-    const winnerTeam = victoryTeam(victoryState);
-    expect(winner).toBeTrue();
-    expect(winnerTeam).toBe("A")
+  const winner = hasWinner(victoryState);
+  const winnerTeam = victoryTeam(victoryState);
+  expect(winner).toBeTrue();
+  expect(winnerTeam).toBe("A");
 });
 
+// TEST TRACK CALLED
+// https://bun.sh/docs/test/mocks = SpyOn
+// Tracker le nombre d'appels de fonction
+test("SpyOn updateState calls", () => {
+  const spy = spyOn({ updateState }, "updateState");
+
+  expect(spy).toHaveBeenCalledTimes(0);
+  const newState = updateState(victoryState, "B", false);
+  expect(newState.teamB).toBe(0);
+  expect(spy).toHaveBeenCalledTimes(1);
+});
+
+test("SpyOn Penalty Session", () => {
+    const spy = spyOn({simulatePenaltySession}, "simulatePenaltySession")
+    expect(spy).toHaveBeenCalledTimes(0);
+    simulatePenaltySession(initialState);
+    expect(spy).toHaveBeenCalledTimes(1);
+})

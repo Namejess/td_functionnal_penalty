@@ -20,8 +20,6 @@ const randomPenalty = (): boolean => Math.random() < 0.5;
 // #######################################################################
 // UPDATE STATE
 /**
- *
- *
  * @param {PenaltyState} state
  * @param {Team} team
  * @param {boolean} result
@@ -41,8 +39,6 @@ const updateState = (
 // #######################################################################
 // HAS WINNER (détermine le vainqueur)
 /**
- *
- *
  * @param {PenaltyState} state
  * @return {*}  {boolean}
  */
@@ -57,8 +53,6 @@ const hasWinner = (state: PenaltyState): boolean => {
 // #######################################################################
 // SIMULATE PENALTY SESSION
 /**
- *
- *
  * @param {PenaltyState} state
  * @return {*}  {PenaltyState}
  */
@@ -76,8 +70,6 @@ const simulatePenaltySession = (state: PenaltyState): PenaltyState => {
 // #######################################################################
 // TEAM CHOICE (choix team en alternance)
 /**
- *
- *
  * @param {PenaltyState} state
  * @return {*}  {Team}
  */
@@ -87,16 +79,21 @@ const teamChoice = (state: PenaltyState): Team => {
   return team;
 };
 
+// #######################################################################
+// VICTORY TEAM (détermine la team vainqueur)
+/**
+ * @param {PenaltyState} state
+ * @return {*}  {Team}
+ */
+// #######################################################################
 const victoryTeam = (state: PenaltyState): Team => {
-    const winnerTeam: Team = state.teamA > state.teamB ? "A" : "B";
-    return winnerTeam
-}
+  const winnerTeam: Team = state.teamA > state.teamB ? "A" : "B";
+  return winnerTeam;
+};
 
 // #######################################################################
 // DISPLAY HISTORY
 /**
- *
- *
  * @param {PenaltyState} state
  */
 // #######################################################################
@@ -112,7 +109,9 @@ const displayHistory = (state: PenaltyState): void => {
   console.log(
     `Score final: Team A marque ${state.teamA} points / Team B marque ${state.teamB} points`
   );
-  console.log(`Le vainqueur est l'équipe ${victoryTeam(state)} ! Félicitations !`);
+  console.log(
+    `Le vainqueur est l'équipe ${victoryTeam(state)} ! Félicitations !`
+  );
 };
 
 // #######################################################################
@@ -122,12 +121,30 @@ const displayHistory = (state: PenaltyState): void => {
 // III : DISPLAY HISTORY (écriture dans la console du résultat)
 // #######################################################################
 
+
+//      xxxxxxxx             xx            x               xx     xxx x x xxxxxxx
+//      xxxx      x             xx            xx             xxx     x
+//      xx                      x  x           x xx          xx x     x
+//      x                       x   x           x  xxx       xx  x     x
+//      x                        x    x          x    xx    xx    x     x
+//      x                       x     x          x     xxxxx     xx     x  xxxxx
+//      x      xxxxxxxxxx      x     xxx         x       x       x      xxxx
+//      x     xxxxxx           xxxxxxxxx         x               x     xx
+//      x          xx         x        x         x               x     x
+//      xx         x         x        x         x               x     x
+//      xxx       x       xx         x         x               xx    xx
+//       xxxx xxxx       x          xx         x              xx     xxxxxxxxxxxxxx
+
+
 const initialState: PenaltyState = { teamA: 0, teamB: 0, history: [] };
 
 const finalState = simulatePenaltySession(initialState);
 
 displayHistory(finalState);
 
+// #######################################################################
+// EXPORTS
+// #######################################################################
 export {
   displayHistory,
   finalState,
@@ -137,5 +154,5 @@ export {
   simulatePenaltySession,
   teamChoice,
   updateState,
-  victoryTeam
+  victoryTeam,
 };

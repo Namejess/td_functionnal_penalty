@@ -9,4 +9,4 @@ type PenaltyState = {
 };
 
 // Export
-export {type Team, type PenaltyState};
+export { type Team, type PenaltyState };
