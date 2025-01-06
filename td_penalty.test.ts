@@ -26,6 +26,36 @@ const victoryState: PenaltyState = {
   ],
 };
 
+const scenarioDiffState: PenaltyState = {
+  teamA: 2,
+  teamB: 0,
+  history: [
+    { team: "A", result: true },
+    { team: "B", result: false },
+    { team: "A", result: true },
+    { team: "B", result: false },
+    { team: "A", result: true },
+    { team: "B", result: false },
+  ],
+};
+
+const victoryStateDraw: PenaltyState = {
+  teamA: 5,
+  teamB: 5,
+  history: [
+    { team: "A", result: true },
+    { team: "B", result: true },
+    { team: "A", result: true },
+    { team: "B", result: true },
+    { team: "A", result: true },
+    { team: "B", result: true },
+    { team: "A", result: true },
+    { team: "B", result: true },
+    { team: "A", result: true },
+    { team: "B", result: true },
+  ],
+};
+
 // TEST UPDATE STATE
 test("Update State, should return correct new penalty state", () => {
   const newState = updateState(initialState, "B", false);
@@ -68,4 +98,9 @@ test("SpyOn Penalty Session", () => {
     expect(spy).toHaveBeenCalledTimes(0);
     simulatePenaltySession(initialState);
     expect(spy).toHaveBeenCalledTimes(1);
+})
+
+test("Scenario alternatif 1, différence de points irratrapables", () => {
+    const winCondition = hasWinner(scenarioDiffState)
+    expect(winCondition).toBeTrue();
 })

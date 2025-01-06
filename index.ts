@@ -47,7 +47,25 @@ const hasWinner = (state: PenaltyState): boolean => {
   const totalTirs = state.history.length;
   const diff = Math.abs(state.teamA - state.teamB);
 
-  return (totalTirs === 10 && diff > 1) || totalTirs === 10;
+  if (totalTirs > 10 && state.teamA === state.teamB) {
+    hasWinnerDraw(state)
+  }
+
+  if (diff >= 3) return true; // Scenario 1 alternatif
+  if (totalTirs > 10 && state.teamA !== state.teamB) return true; // Scenario 2 alternatif
+
+  return totalTirs === 10 && diff >= 1;
+};
+
+const hasWinnerDraw = (state: PenaltyState): boolean => {
+  const totalTirs = state.history.length;
+  const diff = Math.abs(state.teamA - state.teamB);
+
+  if (totalTirs > 10 && state.teamA === state.teamB) {
+    return diff > 1;
+  }
+
+  return false;
 };
 
 // #######################################################################
@@ -121,7 +139,6 @@ const displayHistory = (state: PenaltyState): void => {
 // III : DISPLAY HISTORY (écriture dans la console du résultat)
 // #######################################################################
 
-
 //      xxxxxxxx             xx            x               xx     xxx x x xxxxxxx
 //      xxxx      x             xx            xx             xxx     x
 //      xx                      x  x           x xx          xx x     x
@@ -134,7 +151,6 @@ const displayHistory = (state: PenaltyState): void => {
 //      xx         x         x        x         x               x     x
 //      xxx       x       xx         x         x               xx    xx
 //       xxxx xxxx       x          xx         x              xx     xxxxxxxxxxxxxx
-
 
 const initialState: PenaltyState = { teamA: 0, teamB: 0, history: [] };
 

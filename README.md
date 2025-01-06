@@ -21,3 +21,7 @@ This project was created using `bun init` in bun v1.1.38. [Bun](https://bun.sh) 
 [https://prog21.dadgum.com/25.html](https://prog21.dadgum.com/25.html)
 
 [https://www.paulgraham.com/avg.html](https://www.paulgraham.com/avg.html)
+
+[https://www.typescriptlang.org/fr/docs/handbook/2/modules.html](https://www.typescriptlang.org/fr/docs/handbook/2/modules.html)
+
+[https://bun.sh/docs/test/mocks](https://bun.sh/docs/test/mocks)
